@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Top level PennyLane module"""
+"""
+This subpackage provides reference plugin implementations. The reference plugins provide basic built-in qubit
+and CV circuit simulators that can be used with PennyLane without the need for additional
+dependencies. They may also be used in the PennyLane test suite in order
+to verify and test quantum gradient computations.
+
+.. currentmodule:: pennylane.plugins
+.. autosummary::
+    :toctree: api
+
+    default_qubit
+    default_gaussian
+"""
 from .default_qubit import DefaultQubit
 from .default_gaussian import DefaultGaussian

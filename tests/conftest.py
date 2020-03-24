@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 """
 Pytest configuration file for PennyLane test suite.
 """
-import pytest
-from unittest.mock import PropertyMock, patch
 import os
+
+import pytest
 import numpy as np
+
 import pennylane as qml
 from pennylane.plugins import DefaultGaussian
 
 # defaults
 TOL = 1e-3
-
+TF_TOL = 2e-2
 
 class DummyDevice(DefaultGaussian):
     """Dummy device to allow Kerr operations"""
@@ -36,6 +37,10 @@ def tol():
     """Numerical tolerance for equality tests."""
     return float(os.environ.get("TOL", TOL))
 
+@pytest.fixture(scope="session")
+def tf_tol():
+    """Numerical tolerance for equality tests."""
+    return float(os.environ.get("TF_TOL", TF_TOL))
 
 @pytest.fixture(scope="session", params=[1, 2])
 def n_layers(request):
@@ -51,22 +56,7 @@ def n_subsystems(request):
 
 @pytest.fixture(scope="session")
 def qubit_device(n_subsystems):
-    """Number of qubits or modes."""
     return qml.device('default.qubit', wires=n_subsystems)
-
-@pytest.fixture(scope="function")
-def qubit_device_1_wire():
-    return qml.device('default.qubit', wires=1)
-
-
-@pytest.fixture(scope="function")
-def qubit_device_2_wires():
-    return qml.device('default.qubit', wires=2)
-
-
-@pytest.fixture(scope="function")
-def qubit_device_3_wires():
-    return qml.device('default.qubit', wires=3)
 
 
 @pytest.fixture(scope="function")
@@ -85,9 +75,39 @@ def qubit_device_3_wires():
 
 
 @pytest.fixture(scope="session")
+def tensornet_device(n_subsystems):
+    return qml.device('default.tensor', wires=n_subsystems)
+
+
+@pytest.fixture(scope="function")
+def tensornet_device_1_wire():
+    return qml.device('default.tensor', wires=1)
+
+
+@pytest.fixture(scope="function")
+def tensornet_device_2_wires():
+    return qml.device('default.tensor', wires=2)
+
+
+@pytest.fixture(scope="function")
+def tensornet_device_3_wires():
+    return qml.device('default.tensor', wires=3)
+
+
+@pytest.fixture(scope="session")
 def gaussian_device(n_subsystems):
     """Number of qubits or modes."""
     return DummyDevice(wires=n_subsystems)
+
+@pytest.fixture(scope="session")
+def gaussian_dummy():
+    """Number of qubits or modes."""
+    return DummyDevice
+
+@pytest.fixture(scope="session")
+def gaussian_device_2_wires():
+    """A 2-mode Gaussian device."""
+    return DummyDevice(wires=2)
 
 
 @pytest.fixture(scope="session")
@@ -109,18 +129,29 @@ def torch_support():
     return torch_support
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
+def skip_if_no_torch_support(torch_support):
+    if not torch_support:
+        pytest.skip("Skipped, no torch support")
+
+
+@pytest.fixture(scope='module')
 def tf_support():
     """Boolean fixture for TensorFlow support"""
     try:
         import tensorflow as tf
-        import tensorflow.contrib.eager as tfe
-        tf.enable_eager_execution()
         tf_support = True
+
     except ImportError as e:
         tf_support = False
 
     return tf_support
+
+
+@pytest.fixture()
+def skip_if_no_tf_support(tf_support):
+    if not tf_support:
+        pytest.skip("Skipped, no tf support")
 
 
 @pytest.fixture(scope="module",
@@ -129,9 +160,20 @@ def seed(request):
     """Different seeds."""
     return request.param
 
+
 @pytest.fixture(scope="function")
-def mock_device():
+def mock_device(monkeypatch):
     """A mock instance of the abstract Device class"""
 
-    with patch.multiple(qml.Device, __abstractmethods__=set()):
-        yield qml.Device()
+    with monkeypatch.context() as m:
+        dev = qml.Device
+        m.setattr(dev, '__abstractmethods__', frozenset())
+        m.setattr(dev, 'short_name', 'mock_device')
+        m.setattr(dev, 'capabilities', lambda cls: {"model": "qubit"})
+        yield qml.Device(wires=2)
+
+@pytest.fixture
+def tear_down_hermitian():
+    yield None
+    qml.Hermitian._eigs = {}
+

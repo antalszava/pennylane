@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,24 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("pennylane/_version.py") as f:
-	version = f.readlines()[-1].split()[-1].strip("\"'")
+    version = f.readlines()[-1].split()[-1].strip("\"'")
 
 requirements = [
     "numpy",
     "scipy",
+    "networkx",
     "autograd",
     "toml",
     "appdirs",
-    "semantic_version"
+    "semantic_version==2.6",
 ]
-
-extra_requirements = {
-    'pytorch':  ["torch", "torchvision"],
-    'tf':  ["tensorflow>=1.12"],
-}
 
 info = {
     'name': 'PennyLane',
@@ -38,25 +34,19 @@ info = {
     'maintainer_email': 'nathan@xanadu.ai',
     'url': 'https://github.com/XanaduAI/pennylane',
     'license': 'Apache License 2.0',
-    'packages': [
-                    'pennylane',
-                    'pennylane.ops',
-                    'pennylane.templates',
-                    'pennylane.plugins',
-                    'pennylane.optimize',
-                    'pennylane.interfaces'
-                ],
+    'packages': find_packages(where="."),
     'entry_points': {
         'pennylane.plugins': [
             'default.qubit = pennylane.plugins:DefaultQubit',
-            'default.gaussian = pennylane.plugins:DefaultGaussian'
+            'default.gaussian = pennylane.plugins:DefaultGaussian',
+            'default.tensor = pennylane.beta.plugins.default_tensor:DefaultTensor',
+            'default.tensor.tf = pennylane.beta.plugins.default_tensor_tf:DefaultTensorTF'
             ],
         },
     'description': 'PennyLane is a Python quantum machine learning library by Xanadu Inc.',
     'long_description': open('README.rst').read(),
     'provides': ["pennylane"],
     'install_requires': requirements,
-    'extras_require': extra_requirements,
     'command_options': {
         'build_sphinx': {
             'version': ('setup.py', version),
@@ -78,6 +68,7 @@ classifiers = [
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3 :: Only',
     "Topic :: Scientific/Engineering :: Physics"
 ]

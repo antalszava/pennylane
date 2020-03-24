@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import autograd
 from pennylane.utils import _flatten, unflatten
 
 
-class GradientDescentOptimizer(object):
+class GradientDescentOptimizer:
     r"""Basic gradient-descent optimizer.
 
     Base class for other gradient-descent-based optimizers.
@@ -33,6 +33,7 @@ class GradientDescentOptimizer(object):
     Args:
         stepsize (float): the user-defined hyperparameter :math:`\eta`
     """
+
     def __init__(self, stepsize=0.01):
         self._stepsize = stepsize
 

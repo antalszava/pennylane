@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ class NesterovMomentumOptimizer(MomentumOptimizer):
         stepsize (float): user-defined hyperparameter :math:`\eta`
         momentum (float): user-defined hyperparameter :math:`m`
     """
+
     def compute_grad(self, objective_fn, x, grad_fn=None):
         r"""Compute gradient of the objective_fn at at
         the shifted point :math:`(x - m\times\text{accumulation})`.
@@ -62,5 +63,5 @@ class NesterovMomentumOptimizer(MomentumOptimizer):
             g = grad_fn(shifted_x)  # just call the supplied grad function
         else:
             # default is autograd
-            g = autograd.grad(objective_fn)(shifted_x) # pylint: disable=no-value-for-parameter
+            g = autograd.grad(objective_fn)(shifted_x)  # pylint: disable=no-value-for-parameter
         return g

@@ -38,17 +38,21 @@ clean:
 	rm -rf pennylane/ops/__pycache__
 	rm -rf pennylane/plugins/__pycache__
 	rm -rf tests/__pycache__
+	rm -rf tests/new_qnode/__pycache__
 	rm -rf dist
 	rm -rf build
 	rm -rf .coverage coverage_html_report/
+	rm -rf tmp
+	rm -rf *.dat
+	make -C qchem clean
 
 docs:
 	make -C doc html
 
 .PHONY : clean-docs
 clean-docs:
+	rm -rf doc/code/api
 	make -C doc clean
-
 
 test:
 	$(PYTHON) $(TESTRUNNER)

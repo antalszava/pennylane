@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,16 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 r"""
-.. _cv_ops:
-
-CV quantum operations
-=====================
-
-.. currentmodule:: pennylane.ops.cv
-
-**Module name:** :mod:`pennylane.ops.cv`
-
-This section contains the available built-in continuous-variable
+This module contains the available built-in continuous-variable
 quantum operations supported by PennyLane, as well as their conventions.
 
 .. todo:: Add gradient recipes for Gaussian state preparations
@@ -40,53 +31,6 @@ quantum operations supported by PennyLane, as well as their conventions.
    For the Heisenberg matrix representation of CV operations, we use the ordering
    :math:`(\hat{\mathbb{1}}, \hat{x}, \hat{p})` for single modes
    and :math:`(\hat{\mathbb{1}}, \hat{x}_1, \hat{p}_2, \hat{x}_1,\hat{p}_2)` for two modes .
-
-Gates
------
-
-.. autosummary::
-    Rotation
-    Squeezing
-    Displacement
-    Beamsplitter
-    TwoModeSqueezing
-    QuadraticPhase
-    ControlledAddition
-    ControlledPhase
-    Kerr
-    CrossKerr
-    CubicPhase
-    Interferometer
-
-
-State preparation
------------------
-
-.. autosummary::
-    CoherentState
-    SqueezedState
-    DisplacedSqueezedState
-    ThermalState
-    GaussianState
-    FockState
-    FockStateVector
-    FockDensityMatrix
-    CatState
-
-Observables
------------
-
-.. autosummary::
-    NumberOperator
-    X
-    P
-    QuadOperator
-    PolyXP
-    FockStateProjector
-
-
-Code details
-~~~~~~~~~~~~
 """
 import numpy as np
 from scipy.linalg import block_diag
@@ -122,7 +66,7 @@ def _rotation(phi, bare=False):
 
 class Rotation(CVOperation):
     r"""pennylane.Rotation(phi, wires)
-    Phase space rotation
+    Phase space rotation.
 
     .. math::
         R(\phi) = \exp\left(i \phi \ad \a\right)=\exp\left(i \frac{\phi}{2}
@@ -592,11 +536,11 @@ class Interferometer(CVOperation):
     @staticmethod
     def _heisenberg_rep(p):
         N = len(p[0])
-        X = p[0].real
-        Y = p[0].imag
+        A = p[0].real
+        B = p[0].imag
 
         rows = np.arange(2 * N).reshape(2, -1).T.flatten()
-        S = np.vstack([np.hstack([X, -Y]), np.hstack([Y, X])])[:, rows][rows]
+        S = np.vstack([np.hstack([A, -B]), np.hstack([B, A])])[:, rows][rows]
 
         M = np.eye(2 * N + 1)
         M[1 : 2 * N + 1, 1 : 2 * N + 1] = S
@@ -667,7 +611,7 @@ class DisplacedSqueezedState(CVOperation):
     **Details:**
 
     * Number of wires: 1
-    * Number of parameters: 3
+    * Number of parameters: 4
     * Gradient recipe: None (uses finite difference)
 
     Args:
@@ -710,7 +654,7 @@ class GaussianState(CVOperation):
     **Details:**
 
     * Number of wires: Any
-    * Number of parameters: 1
+    * Number of parameters: 2
     * Gradient recipe: None
 
     Args:

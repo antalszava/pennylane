@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,42 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 r"""
-About
-=====
-
-**Module name:** :mod:`pennylane.about`
-
-.. currentmodule:: pennylane.about
-
-A simple module to display all the details of the `pennylane` installation,
+This module contains the :func:`about` function to display all the details of the PennyLane installation,
 e.g., OS, version, `Numpy` and `Scipy` versions, installation method.
-
-Behaviour
----------
-
-The module simply prints the information on screen and can be accessed as
-`pennylane.about()`
-
-Summary of methods
-------------------
-
-.. currentmodule:: pennylane.about
-
-.. autosummary::
-    about
-
-Code details
-~~~~~~~~~~~~
-
-.. currentmodule:: pennylane.about
-
 """
-import sys
 import platform
-from pip import _internal
+import importlib
+import sys
 from pkg_resources import iter_entry_points
 import numpy
 import scipy
+
+# The following if/else block enables support for pip versions 19.3.x
+_parent_module = importlib.util.find_spec("pip._internal.main") or importlib.util.find_spec(
+    "pip._internal"
+)
+_internal_main = importlib.util.module_from_spec(_parent_module)
+_parent_module.loader.exec_module(_internal_main)
 
 
 def about():
@@ -55,7 +35,7 @@ def about():
     Prints the information for pennylane installation.
     """
     plugin_devices = iter_entry_points("pennylane.plugins")
-    _internal.main(["show", "pennylane"])
+    _internal_main.main(["show", "pennylane"])
     print("Platform info:           {}".format(platform.platform(aliased=True)))
     print("Python version:          {0}.{1}.{2}".format(*sys.version_info[0:3]))
     print("Numpy version:           {}".format(numpy.__version__))

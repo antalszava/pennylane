@@ -1,4 +1,4 @@
-# Copyright 2018 Xanadu Quantum Technologies Inc.
+# Copyright 2018-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -105,8 +105,8 @@ class TestProperties:
     def test_get_item(self, default_config):
         """Test getting items."""
         # get existing options
-        assert default_config['main.shots'] == 0
-        assert default_config['main']['shots'] == 0
+        assert default_config['main.shots'] == 1000
+        assert default_config['main']['shots'] == 1000
         assert default_config['strawberryfields.global.hbar'] == 1
         assert default_config['strawberryfields.global']['hbar'] == 1
 
@@ -158,4 +158,4 @@ class TestPennyLaneInit:
         dev = qml.device('default.gaussian', wires=2, config=default_config)
 
         assert dev.hbar == 2
-        assert dev.shots == 0
+        assert dev.shots == 1000
