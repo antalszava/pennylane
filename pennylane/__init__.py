@@ -162,6 +162,7 @@ def device(name, *args, **kwargs):
         # load plugin device
         return plugin_device_class(*args, **options)
 
+    print(name, plugin_devices)
     raise DeviceError("Device does not exist. Make sure the required plugin is installed.")
 
 

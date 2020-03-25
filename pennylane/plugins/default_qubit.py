@@ -198,7 +198,9 @@ class DefaultQubit(QubitDevice):
         mat = np.reshape(mat, [2] * len(wires) * 2)
         vec = np.reshape(vec, [2] * self.num_wires)
         axes = (np.arange(len(wires), 2 * len(wires)), wires)
+        # print('tensordot', mat.shape, vec.shape, axes)
         tdot = np.tensordot(mat, vec, axes=axes)
+        # print(tdot, tdot.shape)
 
         # tensordot causes the axes given in `wires` to end up in the first positions
         # of the resulting tensor. This corresponds to a (partial) transpose of
@@ -208,7 +210,10 @@ class DefaultQubit(QubitDevice):
         perm = wires + unused_idxs
         inv_perm = np.argsort(perm)  # argsort gives inverse permutation
         state_multi_index = np.transpose(tdot, inv_perm)
-        return np.reshape(state_multi_index, 2 ** self.num_wires)
+
+        a = np.reshape(state_multi_index, 2 ** self.num_wires)
+
+        return a 
 
     def reset(self):
         """Reset the device"""
