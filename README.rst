@@ -141,4 +141,4 @@ We also have a `PennyLane discussion forum <https://discuss.pennylane.ai>`_ - co
 License
 =======
 
-PennyLane is **free** and **open source**, released under the Apache License, Version 2.0.
+PennyLane is **free** and **open source**, released under the Apache License, Version 2.0.0.
